@@ -26,27 +26,27 @@ echo "    -> Check systemd service of strongswan"
 
 if [[ "$1" == "count_all_tunnels" ]];
 then
-sudo ipsec status | awk {'print $1'} | grep -v 'Security' | cut -d "{" -f1 | cut -d "[" -f1 | uniq  | wc -l
+sudo strongswan status | awk {'print $1'} | grep -v 'Security' | cut -d "{" -f1 | cut -d "[" -f1 | uniq  | wc -l
 exit 0
 fi
 
 if [[ "$1" == "packetloss" ]];
 then
-# tunnels_name=`sudo ipsec status | awk {'print $1'}  | cut -d"[" -f1 | cut -d"{" -f1  | sort | uniq | grep -v "Security"`
+# tunnels_name=`sudo strongswan status | awk {'print $1'}  | cut -d"[" -f1 | cut -d"{" -f1  | sort | uniq | grep -v "Security"`
 	if [[ "$2" == "" ]]
 	then
 	echo "Tunnel name is empty."
 	echo "Available tunnel names: "
-	tunnels_name=`sudo ipsec status | awk {'print $1'}  | cut -d"[" -f1 | cut -d"{" -f1  | sort | uniq | grep -v "Security"`
+	tunnels_name=`sudo strongswan status | awk {'print $1'}  | cut -d"[" -f1 | cut -d"{" -f1  | sort | uniq | grep -v "Security"`
 	echo $tunnels_name
 	exit 1
 	fi
 	export tunnel_name="$2"
-	tunnel_endpoint_ip=`sudo ipsec status | grep -i $tunnel_name | grep -o "===.*" | awk {'print $2'} | cut -d"/" -f1`
+	tunnel_endpoint_ip=`sudo strongswan status | grep -i $tunnel_name | grep -o "===.*" | awk {'print $2'} | cut -d"/" -f1`
         if [ "$tunnel_endpoint_ip" = "" ]
         then
         echo "Tunnel does not exists"
-        exit 1
+        exit 1:
         fi
 	ping $tunnel_endpoint_ip -c 50 -i 0.2 -W1 > /tmp/ping_status
 	packet_loss_percentage=`cat /tmp/ping_status | grep loss | awk {'print $6'} | sed 's/%//g'`
@@ -58,17 +58,17 @@ fi
 
 if [ "$1" == "rtt" ];
 then
-# tunnels_name=`sudo ipsec status | awk {'print $1'}  | cut -d"[" -f1 | cut -d"{" -f1  | sort | uniq | grep -v "Security"`
+# tunnels_name=`sudo strongswan status | awk {'print $1'}  | cut -d"[" -f1 | cut -d"{" -f1  | sort | uniq | grep -v "Security"`
         if [[ "$2" == "" ]]
         then
         echo "Tunnel name is empty."
         echo "Available tunnel names: "
-        tunnels_name=`sudo ipsec status | awk {'print $1'}  | cut -d"[" -f1 | cut -d"{" -f1  | sort | uniq | grep -v "Security"`
+        tunnels_name=`sudo strongswan status | awk {'print $1'}  | cut -d"[" -f1 | cut -d"{" -f1  | sort | uniq | grep -v "Security"`
         echo $tunnels_name
         exit 1
         fi
         export tunnel_name="$2"
-        tunnel_endpoint_ip=`sudo ipsec status | grep -i $tunnel_name | grep -o "===.*" | awk {'print $2'} | cut -d"/" -f1`
+        tunnel_endpoint_ip=`sudo strongswan status | grep -i $tunnel_name | grep -o "===.*" | awk {'print $2'} | cut -d"/" -f1`
 	if [ "$tunnel_endpoint_ip" = "" ]
 	then
 	echo "Tunnel does not exists"
